@@ -1,8 +1,8 @@
 import got from 'got';
 import { Command } from '../types/command.js';
-import TextFileWriter from '../text-file-writer.js';
 import StringOfferGenerator from '../string-offer-generator.js';
 import {ServerInitialData} from '../types/server-initial-data.js';
+import ArrayDataFileWriter from '../array-data-file-writer.js';
 
 const URL = 'http://localhost:3123/data';
 
@@ -27,7 +27,7 @@ export default class GeneratorCommand implements Command {
       () => offerGeneratorString.generate()
     );
 
-    const csvFileWriter = new TextFileWriter(filepath);
-    csvFileWriter.write(offers.join('\n'));
+    const arrayDataFileWriter = new ArrayDataFileWriter(filepath)
+    arrayDataFileWriter.write(offers);
   }
 }
