@@ -1,5 +1,6 @@
 import { Command } from '../types/command.js';
 import AsyncTSVFileReader from '../tsv-async-reader.js';
+import {tsvStringToTicket} from '../../utils/common.js';
 
 export default class ImportCommand implements Command {
   public readonly name = '--import';
@@ -7,8 +8,9 @@ export default class ImportCommand implements Command {
     const fileReader = new AsyncTSVFileReader(filename.trim());
 
     try {
+      fileReader.addListener('data', (row) => console.log(tsvStringToTicket(row)));
+      fileReader.addListener('end', (count: number) => console.log(`Импортировано: ${count}`));
       fileReader.read();
-      fileReader.toArray().then((tickets) => console.log(tickets));
     } catch (err) {
 
       if (!(err instanceof Error)) {
