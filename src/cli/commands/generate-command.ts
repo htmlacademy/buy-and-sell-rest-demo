@@ -2,7 +2,7 @@ import got from 'got';
 import { Command } from '../types/command.js';
 import StringOfferGenerator from '../string-offer-generator.js';
 import {ServerInitialData} from '../types/server-initial-data.js';
-import ArrayDataFileWriter from '../array-data-file-writer.js';
+import TSVFileWriter from '../tsv-file-writer.js';
 
 const URL = 'http://localhost:3123/data';
 
@@ -22,12 +22,10 @@ export default class GeneratorCommand implements Command {
     }
 
     const offerGeneratorString = new StringOfferGenerator(this.initialData);
-    const offers = Array.from(
-      { length: offerCount },
-      () => offerGeneratorString.generate()
-    );
+    const tsvFileWriter = new TSVFileWriter(filepath);
 
-    const arrayDataFileWriter = new ArrayDataFileWriter(filepath)
-    arrayDataFileWriter.write(offers);
+    for (let i = 0; i < offerCount; i++) {
+      await tsvFileWriter.write(offerGeneratorString.generate());
+    }
   }
 }
