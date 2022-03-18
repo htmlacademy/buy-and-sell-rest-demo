@@ -3,7 +3,7 @@ import { Command } from './types/command.js';
 import { ParsedCommand } from './types/parsed-command.js';
 
 export default class CLIApplication implements CLIManager {
-  private commands: Command[] = [];
+  private commands: {[propertyName: string]: Command} = {};
   private defaultCommand = '--help';
 
   private parseCommand(cliArguments: string[]): ParsedCommand {
@@ -22,24 +22,23 @@ export default class CLIApplication implements CLIManager {
     }, parsedCommand);
   }
 
-  public registerCommands(commands: { new(): Command }[]): void {
-    this.commands = commands.map((Command) => new Command());
+  public registerCommands(commandList: { new(): Command }[]): void {
+    this.commands = commandList.reduce((acc, Command) => {
+      const cliCommand = new Command();
+      acc[cliCommand.name] = new Command();
+      return acc;
+    }, this.commands)
   }
 
   public getCommand(commandName: string): Command {
-    const command = this.commands.find((command) => command.name === commandName);
-
-    if (!command) {
-      return this.getCommand(this.defaultCommand);
-    }
-
-    return command;
+    return this.commands[commandName] ?? this.commands[this.defaultCommand];
   }
 
   public processCommand(argv: string[]): void {
     const parsedCommand = this.parseCommand(argv);
     const [commandName] = Object.keys(parsedCommand);
     const command = this.getCommand(commandName);
-    command.execute(...parsedCommand[commandName]);
+    const commandArguments = parsedCommand[commandName] ?? [];
+    command.execute(...commandArguments);
   }
 }
