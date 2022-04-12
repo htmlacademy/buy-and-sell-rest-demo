@@ -1,0 +1,34 @@
+{
+  "name": "buy-and-sell",
+  "version": "1.0.0",
+  "description": "Проект «{{projectTitle}}» от HTML Academy",
+  "keywords": [
+    "rest",
+    "api",
+    "node.js"
+  ],
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run build && node ./dist/main.js",
+    "build": "npm run clean && npm run compile",
+    "lint": "eslint src/ --ext .ts",
+    "compile": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "ts": "ts-node"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.26",
+    "@typescript-eslint/eslint-plugin": "^5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
+    "eslint": "^8.12.0",
+    "eslint-config-htmlacademy": "^5.1.2",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^16.13.0",
+    "npm": "^8.1.0"
+  }
+}
