@@ -1,8 +1,10 @@
 import {User} from '../../types/user.type.js';
 import typegoose, {getModelForClass} from '@typegoose/typegoose';
-import {TimeStamps} from '@typegoose/typegoose/lib/defaultClasses.js';
+import {Base, TimeStamps} from '@typegoose/typegoose/lib/defaultClasses.js';
 
 const {prop} = typegoose;
+
+export interface UserEntity extends Base {}
 
 export class UserEntity extends TimeStamps implements User {
   @prop({ unique: true, required: true })
