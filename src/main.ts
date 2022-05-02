@@ -9,6 +9,8 @@ import DatabaseService from './common/database-client/database.service.js';
 import {DatabaseInterface} from './common/database-client/database.interface.js';
 import UserService from './modules/user/user.service.js';
 import {UserServiceInterface} from './modules/user/user-service.interface.js';
+import {UserEntity, UserModel} from './modules/user/user.entity.js';
+import { ModelType } from '@typegoose/typegoose/lib/types';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -16,6 +18,7 @@ applicationContainer.bind<LoggerInterface>(Component.LoggerInterface).to(LoggerS
 applicationContainer.bind<ConfigInterface>(Component.ConfigInterface).to(ConfigService).inSingletonScope();
 applicationContainer.bind<DatabaseInterface>(Component.DatabaseInterface).to(DatabaseService).inSingletonScope();
 applicationContainer.bind<UserServiceInterface>(Component.UserServiceInterface).to(UserService);
+applicationContainer.bind<ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
 
 
 const application = applicationContainer.get<Application>(Component.Application);
