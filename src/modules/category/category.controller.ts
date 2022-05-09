@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import {Request, Response} from 'express';
 import {inject, injectable} from 'inversify';
-import {plainToInstance} from 'class-transformer';
 import {Controller} from '../../common/controller/controller.js';
 import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
@@ -10,6 +9,7 @@ import {CategoryServiceInterface} from './category-service.interface.js';
 import {StatusCodes} from 'http-status-codes';
 import CategoryDto from './dto/category.dto.js';
 import {fillDTO} from '../../utils/common.js';
+import CreateCategoryDto from './dto/create-category.dto.js';
 
 @injectable()
 export default class CategoryController extends Controller {
@@ -31,7 +31,23 @@ export default class CategoryController extends Controller {
     this.send(res, StatusCodes.OK, categoriesDTO);
   }
 
-  public create(_req: Request, _res: Response): void {
-    // Код обработчика
+  public async create(
+    {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateCategoryDto>,
+    res: Response): Promise<void> {
+
+    const existCategory = await this.categoryService.findByCategoryName(body.name);
+
+    if (existCategory) {
+      const errorMessage = `Category with name «${body.name}» exists.`;
+      this.send(res, StatusCodes.UNPROCESSABLE_ENTITY, {error: errorMessage});
+      return this.logger.error(errorMessage);
+    }
+
+    const result = await this.categoryService.create(body);
+    this.send(
+      res,
+      StatusCodes.CREATED,
+      fillDTO(CategoryDto, result)
+    );
   }
 }
