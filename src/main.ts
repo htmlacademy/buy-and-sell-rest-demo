@@ -17,6 +17,8 @@ import {CategoryServiceInterface} from './modules/category/category-service.inte
 import OfferService from './modules/offer/offer.service.js';
 import {OfferServiceInterface} from './modules/offer/offer-service.interface.js';
 import {OfferEntity, OfferModel} from './modules/offer/offer.entity.js';
+import {ControllerInterface} from './common/controller/controller.interface.js';
+import CategoryController from './modules/category/category.controller.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -29,6 +31,8 @@ applicationContainer.bind<CategoryServiceInterface>(Component.CategoryServiceInt
 applicationContainer.bind<ModelType<CategoryEntity>>(Component.CategoryModel).toConstantValue(CategoryModel);
 applicationContainer.bind<OfferServiceInterface>(Component.OfferServiceInterface).to(OfferService);
 applicationContainer.bind<ModelType<OfferEntity>>(Component.OfferModel).toConstantValue(OfferModel);
+
+applicationContainer.bind<ControllerInterface>(Component.CategoryController).to(CategoryController).inSingletonScope();
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();
