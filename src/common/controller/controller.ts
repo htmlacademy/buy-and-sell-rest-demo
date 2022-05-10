@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import {injectable} from 'inversify';
 import {Response, Router} from 'express';
+import asyncHandler from 'express-async-handler';
 import {LoggerInterface} from '../logger/logger.interface.js';
 import {RouteInterface} from '../../types/route.interface.js';
 import {ControllerInterface} from './controller.interface.js';
@@ -18,7 +19,7 @@ export abstract class Controller implements ControllerInterface {
   }
 
   public addRoute(route: RouteInterface) {
-    this._router[route.method](route.path, route.handler.bind(this));
+    this._router[route.method](route.path, asyncHandler(route.handler.bind(this)));
     this.logger.info(`Route registered: ${route.method.toUpperCase()} ${route.path}`);
   }
 
