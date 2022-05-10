@@ -1,0 +1,409 @@
+openapi: 3.0.1
+info:
+  title: REST API сервер для демо-проекта «Куплю. Продам».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Куплю. Продам».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+tags:
+  - name: offer
+    description: Действия с объявлениями.
+  - name: category
+    description: Действия с категориями.
+  - name: comment
+    description: Действия с комментариями.
+  - name: user
+    description: Действия с пользователем.
+paths:
+  /offers/:
+    post:
+      tags:
+        - offer
+      summary: Добавить новое объявление
+      description: Добавляет новое объявление.
+      operationId: createOffer
+      requestBody:
+        description: Объект с новым объявлением
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Createoffer'
+        required: true
+      responses:
+        '201':
+          description: Новое объявление
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+        '400':
+          description: Ошибка тела запроса
+          content: {}
+        '404':
+          description: Объявление не найдено
+          content: {}
+  /offers/{offerId}:
+    get:
+      tags:
+        - offer
+      summary: Получить детальную информацию по объявлению
+      description: Возвращает объявление с идентификатором `offerId`.
+      operationId: getOfferById
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор объявления
+          required: true
+          schema:
+            type: string
+            example: f17c1
+      responses:
+        '200':
+          description: Объект объявления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '404':
+          description: Объявление не найдено
+          content: {}
+    put:
+      tags:
+        - offer
+      summary: Редактировать объявление
+      description: Обновляет объявление с идентификатором `offerId`.
+      operationId: updateOfferById
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор объявления
+          required: true
+          schema:
+            type: string
+            example: f17c1
+      requestBody:
+        description: Объект с изменённым объявлением
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Createoffer'
+        required: true
+      responses:
+        '200':
+          description: Объект объявления
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+        '404':
+          description: Объявление не найдено
+          content: {}
+    delete:
+      tags:
+        - offer
+      summary: Удалить объявление
+      description: Удаляет объявление с идентификатором `offerId`.
+      operationId: deleteOfferById
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор объявления
+          required: true
+          schema:
+            type: string
+            example: f17c1
+      responses:
+        '200':
+          description: Объявление удалено
+          content: {}
+        '404':
+          description: Объявление не найдено
+          content: {}
+  /categories:
+    get:
+      tags:
+        - category
+      summary: Получить список категорий
+      description: Возвращает массив категорий. Каждая категория описана в виде объекта.
+      operationId: getCategories
+      responses:
+        '200':
+          description: Массив категорий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /categories/{categoryId}/offers:
+    get:
+      tags:
+        - category
+      summary: Получить список объявлений категории
+      description: Возвращает массив объявлений категории с идентификатором `categoryId`.
+      operationId: getOffersByCategory
+      parameters:
+        - name: categoryId
+          in: path
+          description: Уникальный идентификатор категории
+          required: true
+          schema:
+            type: string
+            example: a37c1
+      responses:
+        '200':
+          description: Возвращает массив объявлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+        '404':
+          description: Категория не найдена
+          content: {}
+  /offers/last:
+    get:
+      tags:
+        - offer
+      summary: Получить список новых объявлений
+      description: Возвращает массив последних созданных объявлений. Каждое объявление описано в виде объекта.
+      operationId: getLastOffers
+      responses:
+        '200':
+          description: Массив объявлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+  /offers/popular:
+    get:
+      tags:
+        - offer
+      summary: Получить список обсуждаемых объявлений
+      description: Возвращает массив обсуждаемых объявлений. Каждое объявление описано в виде объекта.
+      operationId: getPopularOffers
+      responses:
+        '200':
+          description: Массив объявлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+  /offers/{offerId}/comments:
+    get:
+      tags:
+        - comment
+      summary: Получить список комментариев
+      description: Возвращает список комментариев для объявления с идентификатором `offerId`.
+      operationId: getComment
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор объявления
+          required: true
+          schema:
+            type: string
+            example: f17c1
+      responses:
+        '200':
+          description: Массив комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '404':
+          description: Объявление не найдено
+          content: {}
+    post:
+      tags:
+        - comment
+      summary: Добавить новый комментарий
+      description: Добавляет новый комментарий для объявления с идентификатором `offerId`.
+      operationId: postComment
+      parameters:
+        - name: offerId
+          in: path
+          description: Уникальный идентификатор объявления
+          required: true
+          schema:
+            type: string
+            example: f17c1
+      requestBody:
+        description: Объект с новым комментарием
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateComment'
+        required: true
+      responses:
+        '201':
+          description: Новый комментарий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Ошибка тела запроса
+          content: {}
+        '404':
+          description: Объявление не найдено
+          content: {}
+  /users/register:
+    post:
+      tags:
+        - user
+      summary: Создать нового пользователя
+      description: Создает нового пользователя.
+      operationId: registerUser
+      requestBody:
+        description: Объект, содержащий данные пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+        required: true
+      responses:
+        '200':
+          description: Статус авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationInfo'
+        '400':
+          description: Ошибка тела запроса
+          content: {}
+        '409':
+          description: Пользователь с таким email существует
+          content: {}
+components:
+  schemas:
+    Createoffer:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Кофеварка гейзерная
+        description:
+          type: string
+          example: Купил кофе, а варить не в чем. Необходима кофеварка среднего объема, в хорошем состоянии. Хочу сделать себе подарок к новому году. :)
+        postDate:
+          type: string
+          example: 2021-12-12T21:55:28.147Z
+        image:
+          type: string
+          example: https://{url}/static/category/home.jpg
+        type:
+          type: string
+          enum:
+            - Buy
+            - Sell
+        price:
+          type: integer
+          format: int32
+          example: 500
+        commentCount:
+          type: integer
+          format: int32
+          example: 10
+        user:
+          $ref: '#/components/schemas/User'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    Offer:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: f17c1
+            commentCount:
+              type: integer
+              format: int32
+              example: 5
+        - $ref: '#/components/schemas/Createoffer'
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          example: a37c1
+        title:
+          type: string
+          enum:
+            - Дом
+            - Электроника
+            - Одежда
+            - Книги
+            - Спорт
+            - Авто
+        image:
+          type: string
+          example: https://{url}/static/category/home.jpg
+    CreateComment:
+      type: object
+      properties:
+        text:
+          type: string
+          example: Купите себе кофемашину и не мучайтесь. Могу посоветовать модельку.
+        user:
+          $ref: '#/components/schemas/User'
+    Comment:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: eb0af
+        - $ref: '#/components/schemas/CreateComment'
+    CreateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Oliver
+        surname:
+          type: string
+          example: Conner
+        email:
+          type: string
+          example: Oliver.conner@gmail.com
+        avatar:
+          type: string
+          example: https://{url}/static/avatar/1.jpg
+    User:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: 2dd9c
+        - $ref: '#/components/schemas/CreateUser'
+    RegisterUser:
+      allOf:
+        - $ref: '#/components/schemas/CreateUser'
+        - type: object
+          properties:
+            password:
+              type: string
+              example: password
+    AuthorizationInfo:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            token:
+              type: string
+              example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
