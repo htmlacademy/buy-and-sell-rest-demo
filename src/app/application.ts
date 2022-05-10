@@ -8,6 +8,7 @@ import {getURI} from '../utils/db.js';
 import {DatabaseInterface} from '../common/database-client/database.interface.js';
 import {ControllerInterface} from '../common/controller/controller.interface.js';
 import {ExceptionFilterInterface} from '../common/errors/exception-filter.interface.js';
+import UserController from '../modules/user/user.controller.js';
 
 @injectable()
 export default class Application {
@@ -19,12 +20,14 @@ export default class Application {
     @inject(Component.DatabaseInterface) private databaseClient: DatabaseInterface,
     @inject(Component.CategoryController) private categoryController: ControllerInterface,
     @inject(Component.ExceptionFilterInterface) private exceptionFilter: ExceptionFilterInterface,
+    @inject(Component.UserController) private userController: UserController,
   ) {
     this.expressApp = express();
   }
 
   public registerRoutes() {
     this.expressApp.use('/categories', this.categoryController.router);
+    this.expressApp.use('/users', this.userController.router);
   }
 
   public registerMiddlewares() {

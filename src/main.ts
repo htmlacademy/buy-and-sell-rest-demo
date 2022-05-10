@@ -21,6 +21,7 @@ import {ControllerInterface} from './common/controller/controller.interface.js';
 import CategoryController from './modules/category/category.controller.js';
 import ExceptionFilter from './common/errors/exception-filter.js';
 import {ExceptionFilterInterface} from './common/errors/exception-filter.interface.js';
+import UserController from './modules/user/user.controller.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -35,6 +36,7 @@ applicationContainer.bind<OfferServiceInterface>(Component.OfferServiceInterface
 applicationContainer.bind<ModelType<OfferEntity>>(Component.OfferModel).toConstantValue(OfferModel);
 applicationContainer.bind<ControllerInterface>(Component.CategoryController).to(CategoryController).inSingletonScope();
 applicationContainer.bind<ExceptionFilterInterface>(Component.ExceptionFilterInterface).to(ExceptionFilter).inSingletonScope();
+applicationContainer.bind<ControllerInterface>(Component.UserController).to(UserController).inSingletonScope();
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();
