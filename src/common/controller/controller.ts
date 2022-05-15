@@ -5,6 +5,7 @@ import asyncHandler from 'express-async-handler';
 import {LoggerInterface} from '../logger/logger.interface.js';
 import {RouteInterface} from '../../types/route.interface.js';
 import {ControllerInterface} from './controller.interface.js';
+import {StatusCodes} from 'http-status-codes';
 
 @injectable()
 export abstract class Controller implements ControllerInterface {
@@ -28,5 +29,17 @@ export abstract class Controller implements ControllerInterface {
       .type('application/json')
       .status(statusCode)
       .json(data);
+  }
+
+  public created<T>(res: Response, data: T): void {
+    this.send(res, StatusCodes.CREATED, data);
+  }
+
+  public noContent<T>(res: Response, data: T): void {
+    this.send(res, StatusCodes.NO_CONTENT, data);
+  }
+
+  public ok<T>(res: Response, data: T): void {
+    this.send(res, StatusCodes.OK, data);
   }
 }
