@@ -28,8 +28,7 @@ export default class CategoryController extends Controller {
 
   public async index(_req: Request, res: Response): Promise<void> {
     const categories = await this.categoryService.find();
-    const categoriesDTO = fillDTO(CategoryDto, categories);
-    this.send(res, StatusCodes.OK, categoriesDTO);
+    this.ok(res, fillDTO(CategoryDto, categories));
   }
 
   public async create(
@@ -47,10 +46,6 @@ export default class CategoryController extends Controller {
     }
 
     const result = await this.categoryService.create(body);
-    this.send(
-      res,
-      StatusCodes.CREATED,
-      fillDTO(CategoryDto, result)
-    );
+    this.created(res, fillDTO(CategoryDto, result));
   }
 }

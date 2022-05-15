@@ -40,10 +40,6 @@ export default class UserController extends Controller {
     }
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
-    this.send(
-      res,
-      StatusCodes.CREATED,
-      fillDTO(UserDto, result)
-    );
+    this.created(res, fillDTO(UserDto, result));
   }
 }
