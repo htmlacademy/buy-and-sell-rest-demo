@@ -8,6 +8,8 @@ import {Request, Response} from 'express';
 import HttpError from '../../common/errors/http-error.js';
 import {StatusCodes} from 'http-status-codes';
 import * as core from 'express-serve-static-core';
+import {fillDTO} from '../../utils/common.js';
+import OfferDto from './dto/offer.dto.js';
 
 type ParamsGetOffer = {
   offerId: string;
@@ -39,6 +41,6 @@ export default class OfferController extends Controller {
       );
     }
 
-    this.ok(res, offer);
+    this.ok(res, fillDTO(OfferDto, offer));
   }
 }
