@@ -26,4 +26,11 @@ export default class OfferService implements OfferServiceInterface {
       .populate(['userId', 'categories'])
       .exec();
   }
+
+  public async find(): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find()
+      .populate(['userId', 'categories'])
+      .exec();
+  }
 }

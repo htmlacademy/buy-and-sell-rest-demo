@@ -30,6 +30,11 @@ export default class OfferController extends Controller {
       handler: this.get,
       middlewares: [new ValidateObjectIdMiddleware('offerId')]
     });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+    });
   }
 
   public async get(
@@ -48,5 +53,10 @@ export default class OfferController extends Controller {
     }
 
     this.ok(res, fillDTO(OfferDto, offer));
+  }
+
+  public async index(_req: Request, res: Response) {
+    const offers = await this.offerService.find();
+    this.ok(res, fillDTO(OfferDto, offers));
   }
 }
