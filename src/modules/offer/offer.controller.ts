@@ -12,6 +12,7 @@ import {fillDTO} from '../../utils/common.js';
 import OfferDto from './dto/offer.dto.js';
 import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
 import CreateOfferDto from './dto/create-offer.dto.js';
+import UpdateOfferDto from './dto/update-offer.dto.js';
 
 type ParamsGetOffer = {
   offerId: string;
@@ -45,6 +46,12 @@ export default class OfferController extends Controller {
       path: '/:offerId',
       method: HttpMethod.Delete,
       handler: this.delete,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+    });
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Patch,
+      handler: this.update,
       middlewares: [new ValidateObjectIdMiddleware('offerId')]
     });
   }
@@ -97,5 +104,22 @@ export default class OfferController extends Controller {
     }
 
     this.noContent(res, offer);
+  }
+
+  public async update(
+    {body, params}: Request<core.ParamsDictionary | ParamsGetOffer, Record<string, unknown>, UpdateOfferDto>,
+    res: Response
+  ): Promise<void> {
+    const updatedOffer = await this.offerService.updateById(params.offerId, body);
+
+    if (!updatedOffer) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${params.offerId} not found.`,
+        'OfferController'
+      );
+    }
+
+    this.ok(res, fillDTO(OfferDto, updatedOffer));
   }
 }
