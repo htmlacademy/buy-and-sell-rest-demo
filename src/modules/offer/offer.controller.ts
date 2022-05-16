@@ -10,6 +10,7 @@ import {StatusCodes} from 'http-status-codes';
 import * as core from 'express-serve-static-core';
 import {fillDTO} from '../../utils/common.js';
 import OfferDto from './dto/offer.dto.js';
+import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
 
 type ParamsGetOffer = {
   offerId: string;
@@ -23,7 +24,12 @@ export default class OfferController extends Controller {
     super(logger);
 
     this.logger.info('Register routes for OfferController…');
-    this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.get});
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.get,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+    });
   }
 
   public async get(
