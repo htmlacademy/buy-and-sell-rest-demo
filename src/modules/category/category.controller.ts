@@ -11,12 +11,23 @@ import CategoryDto from './dto/category.dto.js';
 import {fillDTO} from '../../utils/common.js';
 import CreateCategoryDto from './dto/create-category.dto.js';
 import HttpError from '../../common/errors/http-error.js';
+import * as core from 'express-serve-static-core';
+import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
+import {OfferServiceInterface} from '../offer/offer-service.interface.js';
+import OfferDto from '../offer/dto/offer.dto.js';
+import {RequestQuery} from '../../types/request-query.type.js';
+
+
+type ParamsGetCategory = {
+  categoryId: string;
+}
 
 @injectable()
 export default class CategoryController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
     @inject(Component.CategoryServiceInterface) private readonly categoryService: CategoryServiceInterface,
+    @inject(Component.OfferServiceInterface) private readonly offerService: OfferServiceInterface
   ) {
     super(logger);
 
@@ -24,6 +35,12 @@ export default class CategoryController extends Controller {
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({
+      path: '/:categoryId/offers',
+      method: HttpMethod.Get,
+      handler: this.getOffersFromCategory,
+      middlewares: [new ValidateObjectIdMiddleware('categoryId')]
+    });
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
@@ -47,5 +64,13 @@ export default class CategoryController extends Controller {
 
     const result = await this.categoryService.create(body);
     this.created(res, fillDTO(CategoryDto, result));
+  }
+
+  public async getOffersFromCategory(
+    {params, query}: Request<core.ParamsDictionary | ParamsGetCategory, unknown, unknown, RequestQuery>,
+    res: Response
+  ):Promise<void> {
+    const offers = await this.offerService.findByCategoryId(params.categoryId, query.limit);
+    this.ok(res, fillDTO(OfferDto, offers));
   }
 }
