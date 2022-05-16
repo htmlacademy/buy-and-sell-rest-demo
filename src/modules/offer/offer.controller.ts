@@ -11,6 +11,7 @@ import * as core from 'express-serve-static-core';
 import {fillDTO} from '../../utils/common.js';
 import OfferDto from './dto/offer.dto.js';
 import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
+import CreateOfferDto from './dto/create-offer.dto.js';
 
 type ParamsGetOffer = {
   offerId: string;
@@ -35,6 +36,11 @@ export default class OfferController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
     });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+    });
   }
 
   public async get(
@@ -58,5 +64,14 @@ export default class OfferController extends Controller {
   public async index(_req: Request, res: Response) {
     const offers = await this.offerService.find();
     this.ok(res, fillDTO(OfferDto, offers));
+  }
+
+  public async create(
+    {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
+    res: Response
+  ): Promise<void> {
+    const result = await this.offerService.create(body);
+    const offer = await this.offerService.findById(result.id);
+    this.created(res, fillDTO(OfferDto, offer));
   }
 }
