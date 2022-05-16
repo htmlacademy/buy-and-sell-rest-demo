@@ -33,4 +33,10 @@ export default class OfferService implements OfferServiceInterface {
       .populate(['userId', 'categories'])
       .exec();
   }
+
+  public async deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+    return this.offerModel
+      .findByIdAndDelete(offerId)
+      .exec();
+  }
 }
