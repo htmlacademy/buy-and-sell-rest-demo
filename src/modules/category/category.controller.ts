@@ -16,7 +16,7 @@ import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-obje
 import {OfferServiceInterface} from '../offer/offer-service.interface.js';
 import OfferDto from '../offer/dto/offer.dto.js';
 import {RequestQuery} from '../../types/request-query.type.js';
-
+import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
 
 type ParamsGetCategory = {
   categoryId: string;
@@ -34,7 +34,12 @@ export default class CategoryController extends Controller {
     this.logger.info('Register routes for CategoryController…');
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateCategoryDto)]
+    });
     this.addRoute({
       path: '/:categoryId/offers',
       method: HttpMethod.Get,
