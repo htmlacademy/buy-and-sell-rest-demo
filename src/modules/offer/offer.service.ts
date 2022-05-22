@@ -57,8 +57,8 @@ export default class OfferService implements OfferServiceInterface {
       .exec();
   }
 
-  public async exists(offerId: string): Promise<boolean> {
+  public async exists(documentId: string): Promise<boolean> {
     return (await this.offerModel
-      .exists({_id: offerId})) !== null;
+      .exists({_id: documentId})) !== null;
   }
 }
