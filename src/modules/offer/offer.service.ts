@@ -56,4 +56,9 @@ export default class OfferService implements OfferServiceInterface {
       .populate(['userId', 'categories'])
       .exec();
   }
+
+  public async exists(offerId: string): Promise<boolean> {
+    return (await this.offerModel
+      .exists({_id: offerId})) !== null;
+  }
 }
