@@ -21,7 +21,8 @@ export default class Application {
     @inject(Component.CategoryController) private categoryController: ControllerInterface,
     @inject(Component.ExceptionFilterInterface) private exceptionFilter: ExceptionFilterInterface,
     @inject(Component.UserController) private userController: UserController,
-    @inject(Component.OfferController) private offerController: ControllerInterface
+    @inject(Component.OfferController) private offerController: ControllerInterface,
+    @inject(Component.CommentController) private commentController: ControllerInterface,
   ) {
     this.expressApp = express();
   }
@@ -30,6 +31,7 @@ export default class Application {
     this.expressApp.use('/categories', this.categoryController.router);
     this.expressApp.use('/users', this.userController.router);
     this.expressApp.use('/offers', this.offerController.router);
+    this.expressApp.use('/comments', this.commentController.router);
   }
 
   public registerMiddlewares() {
