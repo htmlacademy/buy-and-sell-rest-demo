@@ -8,13 +8,15 @@ import CreateUserDto from './dto/create-user.dto.js';
 import {UserServiceInterface} from './user-service.interface.js';
 import HttpError from '../../common/errors/http-error.js';
 import {StatusCodes} from 'http-status-codes';
-import {fillDTO} from '../../utils/common.js';
+import {createJWT, fillDTO} from '../../utils/common.js';
 import UserDto from './dto/user.dto.js';
 import {ConfigInterface} from '../../common/config/config.interface.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
 import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-objectid.middleware.js';
 import {UploadFileMiddleware} from '../../common/middlewares/upload-file.middleware.js';
+import LoggedUserDto from './dto/logged-user.dto.js';
+import {JWT_ALGORITM} from './user.constant.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -69,23 +71,25 @@ export default class UserController extends Controller {
 
   public async login(
     {body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>,
-    _res: Response,
+    res: Response,
   ): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
+    const user = await this.userService.verifyUser(body, this.configService.get('SALT'));
 
-    if (!existsUser) {
+    if (! user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with email ${body.email} not found.`,
-        'UserController',
+        'Unauthorized',
+        'UserController'
       );
     }
 
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
+    const token = await createJWT(
+      JWT_ALGORITM,
+      this.configService.get('JWT_SECRET'),
+      { email: user.email, id: user.id}
     );
+
+    this.ok(res, fillDTO(LoggedUserDto, {email: user.email, token}));
   }
 
   public async uploadAvatar(req: Request, res: Response) {
