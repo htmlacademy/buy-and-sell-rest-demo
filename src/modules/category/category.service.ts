@@ -5,6 +5,7 @@ import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {CategoryEntity} from './category.entity.js';
 import CreateCategoryDto from './dto/create-category.dto.js';
+import {MAX_CATEGORIES_COUNT} from './category.constant.js';
 
 @injectable()
 export default class CategoryService implements CategoryServiceInterface {
@@ -54,6 +55,9 @@ export default class CategoryService implements CategoryServiceInterface {
         { $addFields:
             { id: { $toString: '$_id'}, offerCount: { $size: '$offers'} }
         },
+        { $unset: 'offers' },
+        { $limit: MAX_CATEGORIES_COUNT},
+        { $sort: { offerCount: -1 } }
       ]).exec();
 
   }
