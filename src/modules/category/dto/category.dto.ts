@@ -6,4 +6,7 @@ export default class CategoryDto {
 
   @Expose()
   public name!: string;
+
+  @Expose()
+  public offerCount!: string;
 }
