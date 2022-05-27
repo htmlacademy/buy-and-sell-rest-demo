@@ -9,7 +9,6 @@ import {UserServiceInterface} from './user-service.interface.js';
 import HttpError from '../../common/errors/http-error.js';
 import {StatusCodes} from 'http-status-codes';
 import {createJWT, fillDTO} from '../../utils/common.js';
-import UserDto from './dto/user.dto.js';
 import {ConfigInterface} from '../../common/config/config.interface.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
@@ -17,6 +16,7 @@ import {ValidateObjectIdMiddleware} from '../../common/middlewares/validate-obje
 import {UploadFileMiddleware} from '../../common/middlewares/upload-file.middleware.js';
 import LoggedUserDto from './dto/logged-user.dto.js';
 import {JWT_ALGORITM} from './user.constant.js';
+import CreatedUserDto from './dto/created-user.dto.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -66,7 +66,7 @@ export default class UserController extends Controller {
     }
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
-    this.created(res, fillDTO(UserDto, result));
+    this.created(res, fillDTO(CreatedUserDto, result));
   }
 
   public async login(
