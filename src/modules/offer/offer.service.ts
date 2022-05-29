@@ -68,4 +68,22 @@ export default class OfferService implements OfferServiceInterface {
         commentCount: 1,
       }}).exec();
   }
+
+  public async findNew(count: number): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find()
+      .sort({createdAt: -1})
+      .limit(count)
+      .populate(['userId', 'categories'])
+      .exec();
+  }
+
+  public async findDiscussed(count: number): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find()
+      .sort({commentCount: -1})
+      .limit(count)
+      .populate(['userId', 'categories'])
+      .exec();
+  }
 }

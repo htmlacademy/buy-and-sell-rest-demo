@@ -16,6 +16,7 @@ import {CommentServiceInterface} from '../comment/comment-service.interface.js';
 import CommentDto from '../comment/dto/comment.dto.js';
 import {DocumentExistsMiddleware} from '../../common/middlewares/document-exists.middleware.js';
 import {ConfigInterface} from '../../common/config/config.interface.js';
+import {DEFAULT_DISCUSSED_OFFER_COUNT, DEFAULT_NEW_OFFER_COUNT} from './offer.constant.js';
 
 type ParamsGetOffer = {
   offerId: string;
@@ -79,6 +80,16 @@ export default class OfferController extends Controller {
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
     });
+    this.addRoute({
+      path: '/bundles/new',
+      method: HttpMethod.Get,
+      handler: this.getNew,
+    });
+    this.addRoute({
+      path: '/bundles/discussed',
+      method: HttpMethod.Get,
+      handler: this.getDiscussed
+    });
   }
 
   public async get(
@@ -127,5 +138,15 @@ export default class OfferController extends Controller {
   ): Promise<void> {
     const comments = await this.commentService.findByOfferId(params.offerId);
     this.ok(res, fillDTO(CommentDto, comments));
+  }
+
+  public async getNew(_req: Request, res: Response) {
+    const newOffers = await this.offerService.findNew(DEFAULT_NEW_OFFER_COUNT);
+    this.ok(res, fillDTO(OfferDto, newOffers));
+  }
+
+  public async getDiscussed(_req: Request, res: Response) {
+    const discussedOffers = await this.offerService.findDiscussed(DEFAULT_DISCUSSED_OFFER_COUNT);
+    this.ok(res, fillDTO(OfferDto, discussedOffers));
   }
 }
