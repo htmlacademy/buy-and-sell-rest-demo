@@ -17,6 +17,7 @@ import {OfferServiceInterface} from '../offer/offer-service.interface.js';
 import OfferDto from '../offer/dto/offer.dto.js';
 import {RequestQuery} from '../../types/request-query.type.js';
 import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
+import {ConfigInterface} from '../../common/config/config.interface.js';
 
 type ParamsGetCategory = {
   categoryId: string;
@@ -26,10 +27,11 @@ type ParamsGetCategory = {
 export default class CategoryController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.CategoryServiceInterface) private readonly categoryService: CategoryServiceInterface,
     @inject(Component.OfferServiceInterface) private readonly offerService: OfferServiceInterface
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for CategoryController…');
 
