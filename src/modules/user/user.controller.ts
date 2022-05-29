@@ -89,7 +89,8 @@ export default class UserController extends Controller {
       { email: user.email, id: user.id}
     );
 
-    this.ok(res, fillDTO(LoggedUserDto, {email: user.email, token}));
+    const loggedUserDto = fillDTO(LoggedUserDto, user);
+    this.ok(res, {...loggedUserDto, token});
   }
 
   public async uploadAvatar(req: Request, res: Response) {
