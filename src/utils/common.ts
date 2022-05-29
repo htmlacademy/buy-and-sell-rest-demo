@@ -72,3 +72,10 @@ export const transformObject = (properties: string[], staticPath: string, upload
     }));
 };
 
+export const transformErrors = (errors: ValidationError[]): ValidationErrorField[] =>
+  errors.map(({property, value, constraints}) => ({
+    property,
+    value,
+    messages: constraints ? Object.values(constraints) : []
+  }));
+
