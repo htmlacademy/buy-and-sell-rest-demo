@@ -14,6 +14,9 @@ export interface CategoryEntity extends Base {}
 export class CategoryEntity extends TimeStamps implements Category {
   @prop({required: true, trim: true})
   public name!: string;
+
+  @prop({required: true, trim: true})
+  public image!: string;
 }
 
 export const CategoryModel = getModelForClass(CategoryEntity);

@@ -9,4 +9,7 @@ export default class CategoryDto {
 
   @Expose()
   public offerCount!: string;
+
+  @Expose()
+  public image!: string;
 }
