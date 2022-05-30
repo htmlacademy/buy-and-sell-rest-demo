@@ -28,6 +28,5 @@ export default class CreateOfferDto {
   @IsMongoId({each: true, message: 'Categories field must be an array of valid identificators'})
   public categories!: string[];
 
-  @IsMongoId({message: 'userId field must be valid an identificator'})
   public userId!: string;
 }
