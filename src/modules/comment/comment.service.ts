@@ -23,4 +23,12 @@ export default class CommentService implements CommentServiceInterface {
       .sort({createdAt: SortType.Down})
       .populate('userId');
   }
+
+  public async deleteByOfferId(offerId: string): Promise<number> {
+    const result = await this.commentModel
+      .deleteMany({offerId})
+      .exec();
+
+    return result.deletedCount;
+  }
 }
