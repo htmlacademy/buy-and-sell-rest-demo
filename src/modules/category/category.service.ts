@@ -7,6 +7,7 @@ import {CategoryEntity} from './category.entity.js';
 import CreateCategoryDto from './dto/create-category.dto.js';
 import {DEFAULT_CATEGORIES_IMAGES, MAX_CATEGORIES_COUNT} from './category.constant.js';
 import {getRandomItem} from '../../utils/random.js';
+import {SortType} from '../../types/sort-type.enum.js';
 
 
 @injectable()
@@ -60,7 +61,7 @@ export default class CategoryService implements CategoryServiceInterface {
         },
         { $unset: 'offers' },
         { $limit: MAX_CATEGORIES_COUNT},
-        { $sort: { offerCount: -1 } }
+        { $sort: { offerCount: SortType.Down } }
       ]).exec();
 
   }
