@@ -17,6 +17,7 @@ import {UploadFileMiddleware} from '../../common/middlewares/upload-file.middlew
 import LoggedUserDto from './dto/logged-user.dto.js';
 import {JWT_ALGORITM} from './user.constant.js';
 import CreatedUserDto from './dto/created-user.dto.js';
+import UploadUserAvatarDto from './dto/upload-user-avatar.dto.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -94,9 +95,10 @@ export default class UserController extends Controller {
   }
 
   public async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
-    });
+    const {userId} = req.params;
+    const uploaFile = {avatarPath: req.file?.filename};
+    await this.userService.updateById(userId, uploaFile);
+    this.created(res, fillDTO(UploadUserAvatarDto, uploaFile));
   }
 
 }
