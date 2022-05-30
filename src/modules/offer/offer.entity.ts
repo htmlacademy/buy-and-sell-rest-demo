@@ -20,7 +20,7 @@ export class OfferEntity extends TimeStamps {
   @prop({trim: true})
   public description!: string;
 
-  @prop()
+  @prop({default: ''})
   public image!: string;
 
   @prop()

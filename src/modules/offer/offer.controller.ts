@@ -18,6 +18,8 @@ import {DocumentExistsMiddleware} from '../../common/middlewares/document-exists
 import {ConfigInterface} from '../../common/config/config.interface.js';
 import {DEFAULT_DISCUSSED_OFFER_COUNT, DEFAULT_NEW_OFFER_COUNT} from './offer.constant.js';
 import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.middleware.js';
+import {UploadFileMiddleware} from '../../common/middlewares/upload-file.middleware.js';
+import UploadImageDto from './dto/upload-image.dto.js';
 
 type ParamsGetOffer = {
   offerId: string;
@@ -96,6 +98,16 @@ export default class OfferController extends Controller {
       method: HttpMethod.Get,
       handler: this.getDiscussed
     });
+    this.addRoute({
+      path: '/:offerId/image',
+      method: HttpMethod.Post,
+      handler: this.uploadImage,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('offerId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'image'),
+      ]
+    });
   }
 
   public async get(
@@ -155,5 +167,12 @@ export default class OfferController extends Controller {
   public async getDiscussed(_req: Request, res: Response) {
     const discussedOffers = await this.offerService.findDiscussed(DEFAULT_DISCUSSED_OFFER_COUNT);
     this.ok(res, fillDTO(OfferDto, discussedOffers));
+  }
+
+  public async uploadImage(req: Request<core.ParamsDictionary | ParamsGetOffer>, res: Response) {
+    const {offerId} = req.params;
+    const updateDto = { image: req.file?.filename };
+    await this.offerService.updateById(offerId, updateDto);
+    this.created(res, fillDTO(UploadImageDto, {updateDto}));
   }
 }
