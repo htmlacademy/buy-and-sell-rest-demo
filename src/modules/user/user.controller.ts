@@ -50,6 +50,11 @@ export default class UserController extends Controller {
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
       ]
     });
+    this.addRoute({
+      path: '/login',
+      method: HttpMethod.Get,
+      handler: this.checkAuthenticate
+    });
   }
 
   public async create(
@@ -99,6 +104,16 @@ export default class UserController extends Controller {
     const uploaFile = {avatarPath: req.file?.filename};
     await this.userService.updateById(userId, uploaFile);
     this.created(res, fillDTO(UploadUserAvatarDto, uploaFile));
+  }
+
+  public async checkAuthenticate(req: Request, res: Response) {
+    const user = await this.userService.findByEmail(req.user.email);
+
+    // Можно добавить проверку, что `findByEmail` действительно
+    // находит пользователя в базе. Если пользователи не удаляются,
+    // проверки можно избежать.
+
+    this.ok(res, fillDTO(LoggedUserDto, user));
   }
 
 }
