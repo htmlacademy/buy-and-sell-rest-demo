@@ -16,6 +16,9 @@ import {UserEntity, UserModel} from './modules/user/user.entity.js';
 import {CategoryEntity, CategoryModel} from './modules/category/category.entity.js';
 import CategoryService from './modules/category/category.service.js';
 import {CategoryServiceInterface} from './modules/category/category-service.interface.js';
+import OfferService from './modules/offer/offer.service.js';
+import {OfferServiceInterface} from './modules/offer/offer-service.interface.js';
+import {OfferEntity, OfferModel} from './modules/offer/offer.entity.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -26,6 +29,8 @@ applicationContainer.bind<UserServiceInterface>(Component.UserServiceInterface).
 applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
 applicationContainer.bind<CategoryServiceInterface>(Component.CategoryServiceInterface).to(CategoryService);
 applicationContainer.bind<types.ModelType<CategoryEntity>>(Component.CategoryModel).toConstantValue(CategoryModel);
+applicationContainer.bind<OfferServiceInterface>(Component.OfferServiceInterface).to(OfferService);
+applicationContainer.bind<types.ModelType<OfferEntity>>(Component.OfferModel).toConstantValue(OfferModel);
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();
