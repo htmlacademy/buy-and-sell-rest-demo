@@ -1,0 +1,4 @@
+# Get mock data from fake server
+GET http://localhost:3123/api HTTP/1.1
+
+###
