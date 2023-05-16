@@ -44,6 +44,7 @@
     "dotenv": "16.0.3",
     "got": "12.6.0",
     "inversify": "6.0.1",
+    "mongoose": "7.1.1",
     "pino": "8.14.1",
     "reflect-metadata": "0.1.13"
   }
