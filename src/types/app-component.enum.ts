@@ -3,4 +3,5 @@ export const AppComponent = {
   LoggerInterface: Symbol.for('LoggerInterface'),
   ConfigInterface: Symbol.for('ConfigInterface'),
   DatabaseClientInterface: Symbol.for('DatabaseClientInterface'),
+  UserServiceInterface: Symbol.for('UserServiceInterface'),
 } as const;
