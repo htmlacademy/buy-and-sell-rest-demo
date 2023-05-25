@@ -6,6 +6,7 @@ import { inject, injectable } from 'inversify';
 import { DatabaseClientInterface } from '../core/database-client/database-client.interface';
 import { getMongoURI } from '../core/helpers/index.js';
 import express, { Express } from 'express';
+import { ControllerInterface } from '../core/controller/controller.interface.js';
 
 @injectable()
 export default class RestApplication {
@@ -14,7 +15,8 @@ export default class RestApplication {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
-    @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface
+    @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
+    @inject(AppComponent.CategoryController) private readonly categoryController: ControllerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -43,10 +45,17 @@ export default class RestApplication {
     this.logger.info(`🚀Server started on http://localhost:${this.config.get('PORT')}`);
   }
 
+  private async _initRoutes() {
+    this.logger.info('Controller initialization…');
+    this.expressApplication.use('/categories', this.categoryController.router);
+    this.logger.info('Controller initialization completed');
+  }
+
   public async init() {
     this.logger.info('Application initialization…');
 
     await this._initDb();
+    await this._initRoutes();
     await this._initServer();
   }
 }
