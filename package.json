@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@typegoose/typegoose": "11.1.0",
+    "class-transformer": "0.5.1",
     "convict": "6.2.4",
     "convict-format-with-validator": "6.2.0",
     "dayjs": "1.11.7",
