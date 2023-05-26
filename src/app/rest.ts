@@ -51,10 +51,17 @@ export default class RestApplication {
     this.logger.info('Controller initialization completed');
   }
 
+  private async _initMiddleware() {
+    this.logger.info('Global middleware initialization…');
+    this.expressApplication.use(express.json());
+    this.logger.info('Global middleware initialization completed');
+  }
+
   public async init() {
     this.logger.info('Application initialization…');
 
     await this._initDb();
+    await this._initMiddleware();
     await this._initRoutes();
     await this._initServer();
   }
