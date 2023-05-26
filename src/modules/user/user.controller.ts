@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
@@ -19,8 +19,14 @@ export default class UserController extends Controller {
 
   public async create(
     _req: Request<Record<string, unknown>, Record<string, unknown>, CreateUserDto>,
-    _res: Response
+    _res: Response,
+    next: NextFunction
   ): Promise<void> {
-    throw new Error('[UserController] Oops');
+
+    try {
+      throw new Error('[UserController] Oops');
+    } catch (error) {
+      return next(error);
+    }
   }
 }
