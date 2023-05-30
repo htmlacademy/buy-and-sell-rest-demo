@@ -8,6 +8,8 @@ import { AppComponent } from '../../types/app-component.enum.js';
 import { HttpMethod } from '../../types/http-method.enum.js';
 import HttpError from '../../core/errors/http-error.js';
 import { OfferServiceInterface } from './offer-service.interface.js';
+import { fillDTO } from '../../core/helpers/index.js';
+import OfferRdo from './rdo/offer.rdo.js';
 
 type ParamsOfferDetails = {
   offerId: string;
@@ -40,6 +42,6 @@ export default class OfferController extends Controller {
       );
     }
 
-    this.ok(res, offer);
+    this.ok(res, fillDTO(OfferRdo, offer));
   }
 }
