@@ -7,15 +7,25 @@ import { HttpMethod } from '../../types/http-method.enum.js';
 import { CategoryServiceInterface } from './category-service.interface.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CategoryRdo from './rdo/category.rdo.js';
-import CreateCategoryDto from './dto/create-category.dto';
+import CreateCategoryDto from './dto/create-category.dto.js';
 import { StatusCodes } from 'http-status-codes';
 import HttpError from '../../core/errors/http-error.js';
+import { OfferServiceInterface } from '../offer/offer-service.interface.js';
+import { ParamsDictionary } from 'express-serve-static-core';
+import { RequestQuery } from '../../types/request-query.type.js';
+import OfferRdo from '../offer/rdo/offer.rdo.js';
+import { UnknownRecord } from '../../types/unknown-record.type.js';
+
+type ParamsCategoryDetails = {
+  categoryId: string;
+} | ParamsDictionary
 
 @injectable()
 export default class CategoryController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.CategoryServiceInterface) private readonly categoryService: CategoryServiceInterface,
+    @inject(AppComponent.OfferServiceInterface) private readonly offerService: OfferServiceInterface,
   ) {
     super(logger);
 
@@ -23,6 +33,7 @@ export default class CategoryController extends Controller {
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({path: '/:categoryId/offers', method: HttpMethod.Get, handler: this.getOffersFromCategory});
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
@@ -48,5 +59,13 @@ export default class CategoryController extends Controller {
 
     const result = await this.categoryService.create(body);
     this.created(res, fillDTO(CategoryRdo, result));
+  }
+
+  public async getOffersFromCategory(
+    {params, query}: Request<ParamsCategoryDetails, UnknownRecord, UnknownRecord, RequestQuery>,
+    res: Response
+  ):Promise<void> {
+    const offers = await this.offerService.findByCategoryId(params.categoryId, query.limit);
+    this.ok(res, fillDTO(OfferRdo, offers));
   }
 }
