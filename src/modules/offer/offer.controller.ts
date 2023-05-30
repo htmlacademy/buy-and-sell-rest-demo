@@ -15,6 +15,7 @@ import { UnknownRecord } from '../../types/unknown-record.type.js';
 import UpdateOfferDto from './dto/update-offer.dto.js';
 import CommentRdo from '../comment/rdo/comment.rdo.js';
 import { CommentServiceInterface } from '../comment/comment-service.interface.js';
+import { ValidateObjectIdMiddleware } from '../../core/middleware/validate-objectid.middleware.js';
 
 type ParamsOfferDetails = {
   offerId: string;
@@ -30,7 +31,12 @@ export default class OfferController extends Controller {
     super(logger);
 
     this.logger.info('Register routes for OfferController…');
-    this.addRoute({path: '/:offerId', method: HttpMethod.Get, handler: this.show});
+    this.addRoute({
+      path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+    });
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
     this.addRoute({path: '/:offerId', method: HttpMethod.Delete, handler: this.delete});
