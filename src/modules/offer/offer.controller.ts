@@ -16,6 +16,7 @@ import UpdateOfferDto from './dto/update-offer.dto.js';
 import CommentRdo from '../comment/rdo/comment.rdo.js';
 import { CommentServiceInterface } from '../comment/comment-service.interface.js';
 import { ValidateObjectIdMiddleware } from '../../core/middleware/validate-objectid.middleware.js';
+import { DEFAULT_DISCUSSED_OFFER_COUNT, DEFAULT_NEW_OFFER_COUNT } from './offer.constant.js';
 
 type ParamsOfferDetails = {
   offerId: string;
@@ -57,6 +58,8 @@ export default class OfferController extends Controller {
       handler: this.getComments,
       middlewares: [new ValidateObjectIdMiddleware('offerId')]
     });
+    this.addRoute({path: '/bundles/new', method: HttpMethod.Get, handler: this.getNew});
+    this.addRoute({path: '/bundles/discussed', method: HttpMethod.Get, handler: this.getDiscussed});
   }
 
   public async show(
@@ -142,5 +145,15 @@ export default class OfferController extends Controller {
 
     const comments = await this.commentService.findByOfferId(params.offerId);
     this.ok(res, fillDTO(CommentRdo, comments));
+  }
+
+  public async getNew(_req: Request, res: Response) {
+    const newOffers = await this.offerService.findNew(DEFAULT_NEW_OFFER_COUNT);
+    this.ok(res, fillDTO(OfferRdo, newOffers));
+  }
+
+  public async getDiscussed(_req: Request, res: Response) {
+    const discussedOffers = await this.offerService.findDiscussed(DEFAULT_DISCUSSED_OFFER_COUNT);
+    this.ok(res, fillDTO(OfferRdo, discussedOffers));
   }
 }
