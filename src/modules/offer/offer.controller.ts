@@ -18,6 +18,7 @@ import { CommentServiceInterface } from '../comment/comment-service.interface.js
 import { ValidateObjectIdMiddleware } from '../../core/middleware/validate-objectid.middleware.js';
 import { DEFAULT_DISCUSSED_OFFER_COUNT, DEFAULT_NEW_OFFER_COUNT } from './offer.constant.js';
 import { ValidateDtoMiddleware } from '../../core/middleware/validate-dto.middleware.js';
+import { DocumentExistsMiddleware } from '../../core/middleware/document-exists.middleware.js';
 
 type ParamsOfferDetails = {
   offerId: string;
@@ -65,7 +66,10 @@ export default class OfferController extends Controller {
       path: '/:offerId/comments',
       method: HttpMethod.Get,
       handler: this.getComments,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')]
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ]
     });
     this.addRoute({path: '/bundles/new', method: HttpMethod.Get, handler: this.getNew});
     this.addRoute({path: '/bundles/discussed', method: HttpMethod.Get, handler: this.getDiscussed});
