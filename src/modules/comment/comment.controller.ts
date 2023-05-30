@@ -12,6 +12,7 @@ import CreateCommentDto from './dto/create-comment.dto.js';
 import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CommentRdo from './rdo/comment.rdo.js';
+import { ValidateDtoMiddleware } from '../../core/middleware/validate-dto.middleware.js';
 
 @injectable()
 export default class CommentController extends Controller {
@@ -23,7 +24,14 @@ export default class CommentController extends Controller {
     super(logger);
 
     this.logger.info('Register routes for CommentController…');
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new ValidateDtoMiddleware(CreateCommentDto),
+      ]
+    });
   }
 
   public async create(
