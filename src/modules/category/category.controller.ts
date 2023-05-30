@@ -15,6 +15,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import { RequestQuery } from '../../types/request-query.type.js';
 import OfferRdo from '../offer/rdo/offer.rdo.js';
 import { UnknownRecord } from '../../types/unknown-record.type.js';
+import { ValidateObjectIdMiddleware } from '../../core/middleware/validate-objectid.middleware.js';
 
 type ParamsCategoryDetails = {
   categoryId: string;
@@ -33,7 +34,12 @@ export default class CategoryController extends Controller {
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/:categoryId/offers', method: HttpMethod.Get, handler: this.getOffersFromCategory});
+    this.addRoute({
+      path: '/:categoryId/offers',
+      method: HttpMethod.Get,
+      handler: this.getOffersFromCategory,
+      middlewares: [new ValidateObjectIdMiddleware('categoryId')]
+    });
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
