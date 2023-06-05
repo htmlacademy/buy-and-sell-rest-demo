@@ -17,6 +17,7 @@ import OfferRdo from '../offer/rdo/offer.rdo.js';
 import { UnknownRecord } from '../../types/unknown-record.type.js';
 import { ValidateObjectIdMiddleware } from '../../core/middleware/validate-objectid.middleware.js';
 import { ValidateDtoMiddleware } from '../../core/middleware/validate-dto.middleware.js';
+import { PrivateRouteMiddleware } from '../../core/middleware/private-route.middleware.js';
 
 type ParamsCategoryDetails = {
   categoryId: string;
@@ -37,7 +38,10 @@ export default class CategoryController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateCategoryDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateCategoryDto)
+      ]
     });
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
     this.addRoute({
