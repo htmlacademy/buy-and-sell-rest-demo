@@ -1,6 +1,8 @@
 import * as crypto from 'node:crypto';
 import { plainToInstance, ClassConstructor } from 'class-transformer';
 import * as jose from 'jose';
+import { ValidationErrorField } from '../../types/validation-error-field.type.js';
+import { ValidationError } from 'class-validator';
 
 export function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : '';
@@ -27,4 +29,12 @@ export async function createJWT(algorithm: string, jwtSecret: string, payload: o
     .setIssuedAt()
     .setExpirationTime('2d')
     .sign(crypto.createSecretKey(jwtSecret, 'utf-8'));
+}
+
+export function transformErrors(errors: ValidationError[]): ValidationErrorField[] {
+  return errors.map(({property, value, constraints}) => ({
+    property,
+    value,
+    messages: constraints ? Object.values(constraints) : []
+  }));
 }
