@@ -1,11 +1,12 @@
+import cors from 'cors';
+import { inject, injectable } from 'inversify';
+import express, { Express } from 'express';
 import { LoggerInterface } from '../core/logger/logger.interface.js';
 import { ConfigInterface } from '../core/config/config.interface.js';
 import { RestSchema } from '../core/config/rest.schema.js';
 import { AppComponent } from '../types/app-component.enum.js';
-import { inject, injectable } from 'inversify';
 import { DatabaseClientInterface } from '../core/database-client/database-client.interface';
 import { getFullServerPath, getMongoURI } from '../core/helpers/index.js';
-import express, { Express } from 'express';
 import { ControllerInterface } from '../core/controller/controller.interface.js';
 import { ExceptionFilterInterface } from '../core/expception-filters/exception-filter.interface.js';
 import { AuthenticateMiddleware } from '../core/middleware/authenticate.middleware.js';
@@ -76,6 +77,7 @@ export default class RestApplication {
 
     const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_SECRET'));
     this.expressApplication.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
+    this.expressApplication.use(cors());
     this.logger.info('Global middleware initialization completed');
   }
 
