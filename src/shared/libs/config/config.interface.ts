@@ -1,3 +1,3 @@
-export interface Config {
-  get(key: string): string | undefined;
+export interface Config<U> {
+  get<T extends keyof U>(key: T): U[T];
 }
