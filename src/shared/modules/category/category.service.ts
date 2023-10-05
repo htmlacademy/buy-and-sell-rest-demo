@@ -37,6 +37,19 @@ export class DefaultCategoryService implements CategoryService {
   }
 
   public async find(): Promise<DocumentType<CategoryEntity>[]> {
-    return this.categoryModel.find();
+    return this.categoryModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'offers',
+            let: { categoryId: '$_id'},
+            pipeline: [
+              { $match: { $expr: { $in: ['$$categoryId', '$categories'] } } },
+              { $project: { _id: 1}}
+            ],
+            as: 'offers'
+          },
+        },
+      ]).exec();
   }
 }
