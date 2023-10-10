@@ -5,3 +5,4 @@ export * from './category.service.js';
 export * from './category.container.js';
 export * from './category.constant.js';
 export * from './category.controller.js';
+export * from './rdo/category.rdo.js';
