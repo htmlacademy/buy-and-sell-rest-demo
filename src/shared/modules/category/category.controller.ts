@@ -3,11 +3,13 @@ import { Request, Response } from 'express';
 import { BaseController, HttpMethod } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
+import { CategoryService } from './category-service.interface.js';
 
 @injectable()
 export class CategoryController extends BaseController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
+    @inject(Component.CategoryService) private readonly categoryService: CategoryService,
   ) {
     super(logger);
 
@@ -17,11 +19,12 @@ export class CategoryController extends BaseController {
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
   }
 
-  public index(req: Request, res: Response): void {
-    // Код обработчика
+  public async index(_req: Request, res: Response): Promise<void> {
+    const categories = await this.categoryService.find();
+    this.ok(res, categories);
   }
 
-  public create(req: Request, res: Response): void {
+  public create(_req: Request, _res: Response): void {
     // Код обработчика
   }
 }
