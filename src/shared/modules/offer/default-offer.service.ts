@@ -7,16 +7,25 @@ import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
+import { CategoryEntity } from '../category/index.js';
+import { HttpError } from '../../libs/rest/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 
 @injectable()
 export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
-    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>
+    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
+    @inject(Component.CategoryModel) private readonly categoryModel: types.ModelType<CategoryEntity>
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
+    const foundCategories = await this.categoryModel.find({ _id: { $in: dto.categories }});
+    if (foundCategories.length !== dto.categories.length) {
+      throw new HttpError(StatusCodes.BAD_REQUEST, 'Some categories not exists', 'DefaultOfferService');
+    }
+
     const result = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
 

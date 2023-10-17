@@ -7,3 +7,21 @@ GET http://localhost:4000/offers/62711a50b0e24a624d49ffdc HTTP/1.1
 GET http://localhost:4000/offers HTTP/1.1
 
 ###
+
+## Создать новое объявление
+
+POST http://localhost:4000/offers HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Билли Саммерс",
+  "description": "Новый детективный роман от короля ужасов.",
+  "postDate": "2022-05-12T11:56:37.573Z",
+  "image": "billy-summers.png",
+  "type": "Sell",
+  "price": 1408,
+  "categories": ["65258514a30fc6ef77c0edf2", "65258514a30fc6ef77c0ee01"],
+  "userId": "62823cb2c5a64ce9f1b50ec8"
+}
+
+###
