@@ -4,7 +4,7 @@ import {
   BaseController,
   HttpError,
   HttpMethod,
-  RequestQuery,
+  RequestQuery, ValidateDtoMiddleware,
   ValidateObjectIdMiddleware,
 } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
@@ -29,7 +29,12 @@ export class CategoryController extends BaseController {
     this.logger.info('Register routes for CategoryController…');
 
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateCategoryDto)]
+    });
     this.addRoute({
       path: '/:categoryId/offers',
       method: HttpMethod.Get,
