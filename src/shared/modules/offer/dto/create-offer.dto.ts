@@ -14,9 +14,6 @@ export class CreateOfferDto {
   @IsDateString({}, { message: CreateOfferValidationMessage.postDate.invalidFormat })
   public postDate: Date;
 
-  @MaxLength(256, { message: CreateOfferValidationMessage.image.maxLength })
-  public image: string;
-
   @IsEnum(OfferType, { message: CreateOfferValidationMessage.type.invalid })
   public type: OfferType;
 
