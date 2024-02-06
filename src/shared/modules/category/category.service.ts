@@ -1,10 +1,11 @@
 import { CategoryService } from './category-service.interface.js';
 import { inject } from 'inversify';
-import { Component } from '../../types/index.js';
+import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { CategoryEntity } from './category.entity.js';
 import { CreateCategoryDto } from './dto/create-category.dto.js';
+import { MAX_CATEGORIES_COUNT } from './category.constant.js';
 
 export class DefaultCategoryService implements CategoryService {
   constructor(
@@ -53,6 +54,9 @@ export class DefaultCategoryService implements CategoryService {
         { $addFields:
             { id: { $toString: '$_id'}, offerCount: { $size: '$offers'} }
         },
+        { $unset: 'offers' },
+        { $limit: MAX_CATEGORIES_COUNT },
+        { $sort: { offerCount: SortType.Down } }
       ]).exec();
   }
 }
