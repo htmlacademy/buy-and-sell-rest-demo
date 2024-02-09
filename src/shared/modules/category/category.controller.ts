@@ -4,6 +4,8 @@ import { BaseController, HttpMethod } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { CategoryService } from './category-service.interface.js';
+import { fillDTO } from '../../helpers/index.js';
+import { CategoryRdo } from './rdo/category.rdo.js';
 
 @injectable()
 export class CategoryController extends BaseController {
@@ -21,7 +23,8 @@ export class CategoryController extends BaseController {
 
   public async index(_req: Request, res: Response): Promise<void> {
     const categories = await this.categoryService.find();
-    this.ok(res, categories);
+    const responseData = fillDTO(CategoryRdo, categories);
+    this.ok(res, responseData);
   }
 
   public create(_req: Request, _res: Response): void {
