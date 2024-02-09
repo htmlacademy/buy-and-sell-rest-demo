@@ -1,0 +1,6 @@
+# Категории
+## Получить список категорий
+GET http://localhost:4000/categories HTTP/1.1
+Content-Type: application/json
+
+###
