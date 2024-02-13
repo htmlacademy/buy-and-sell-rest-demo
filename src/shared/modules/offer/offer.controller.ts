@@ -4,11 +4,14 @@ import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { OfferService } from './offer-service.interface.js';
+import { ParamOfferId } from './type/param-offerid.type.js';
 
 @injectable()
 export default class OfferController extends BaseController {
   constructor(
     @inject(Component.Logger) logger: Logger,
+    @inject(Component.OfferService) private readonly offerService: OfferService,
   ) {
     super(logger);
 
@@ -16,11 +19,18 @@ export default class OfferController extends BaseController {
     this.addRoute({ path: '/:offerId', method: HttpMethod.Get, handler: this.show });
   }
 
-  public async show(_req: Request, _res: Response): Promise<void> {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'OfferController'
-    );
+  public async show({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const { offerId } = params;
+    const offer = await this.offerService.findById(offerId);
+
+    if (! offer) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${offerId} not found.`,
+        'OfferController'
+      );
+    }
+
+    this.ok(res, offer);
   }
 }
