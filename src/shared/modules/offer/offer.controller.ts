@@ -10,12 +10,14 @@ import { fillDTO } from '../../helpers/index.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
 import { CreateOfferRequest } from './type/create-offer-request.type.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
+import { CommentRdo, CommentService } from '../comment/index.js';
 
 @injectable()
 export default class OfferController extends BaseController {
   constructor(
-    @inject(Component.Logger) logger: Logger,
+    @inject(Component.Logger) protected logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
+    @inject(Component.CommentService) private readonly commentService: CommentService
   ) {
     super(logger);
 
@@ -25,6 +27,7 @@ export default class OfferController extends BaseController {
     this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
     this.addRoute({ path: '/:offerId', method: HttpMethod.Delete, handler: this.delete });
     this.addRoute({ path: '/:offerId', method: HttpMethod.Patch, handler: this.update });
+    this.addRoute({ path: '/:offerId/comments', method: HttpMethod.Get, handler: this.getComments });
   }
 
   public async show({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
@@ -65,6 +68,8 @@ export default class OfferController extends BaseController {
       );
     }
 
+    await this.commentService.deleteByOfferId(offerId);
+
     this.noContent(res, offer);
   }
 
@@ -80,6 +85,19 @@ export default class OfferController extends BaseController {
     }
 
     this.ok(res, fillDTO(OfferRdo, updatedOffer));
+  }
+
+  public async getComments({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    if (!await this.offerService.exists(params.offerId)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${params.offerId} not found.`,
+        'OfferController'
+      );
+    }
+
+    const comments = await this.commentService.findByOfferId(params.offerId);
+    this.ok(res, fillDTO(CommentRdo, comments));
   }
 }
 
