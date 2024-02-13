@@ -6,6 +6,8 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { OfferService } from './offer-service.interface.js';
 import { ParamOfferId } from './type/param-offerid.type.js';
+import { fillDTO } from '../../helpers/index.js';
+import { OfferRdo } from './rdo/offer.rdo.js';
 
 @injectable()
 export default class OfferController extends BaseController {
@@ -31,6 +33,6 @@ export default class OfferController extends BaseController {
       );
     }
 
-    this.ok(res, offer);
+    this.ok(res, fillDTO(OfferRdo, offer));
   }
 }
