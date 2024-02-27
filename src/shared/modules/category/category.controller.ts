@@ -1,10 +1,12 @@
 import { inject, injectable } from 'inversify';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import {
   BaseController,
   HttpError,
-  HttpMethod, PrivateRouteMiddleware,
-  RequestQuery, ValidateDtoMiddleware,
+  HttpMethod,
+  PrivateRouteMiddleware,
+  RequestQuery,
+  ValidateDtoMiddleware,
   ValidateObjectIdMiddleware,
 } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
@@ -44,6 +46,7 @@ export class CategoryController extends BaseController {
       handler: this.getOffersFromCategory,
       middlewares: [new ValidateObjectIdMiddleware('categoryId')]
     });
+    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
